@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from userapp.views import UserApiView
+from userapp.views import LoginView, UserView
 
 urlpatterns = [
-    path("", UserApiView.as_view(), name="userapi"),
-    # path("adult/", UserAdultAPIView.as_view(), name="useradultapi"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("", UserView.as_view(), name="user"),
 ]

@@ -5,14 +5,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 
 
-# class CustomAdultPermission(permissions.BasePermission):
-#     def has_permission(self, request, view):
-#         user = request.user
-#         result = bool(user and user.is_authenticated and user.age >= 18)
-        # return result
-
-
-class UserApiView(APIView):
+class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
@@ -25,7 +18,11 @@ class UserApiView(APIView):
         return Response({"message": "로그인 성공!!"}, status=status.HTTP_200_OK)
 
 
-# class UserAdultAPIView(APIView):
-#     permission_classes = [CustomAdultPermission]
-#     def get(self, request):
-#         return Response({"msg":"get success"})
+class UserView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = request.user
+            user_profile = request.user.userprofile
+            articles = user.article_set.all()
+            return Response({""}, status=status.HTTP_200_OK)
+        return Response({"error":"로그인이 필요합니다."}, status=status.HTTP_401_UNAUTHORIZED)
