@@ -1,24 +1,66 @@
 from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
-# Create your models here.
-class User(models.Model):
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None):
+        if not username:
+            raise ValueError('Users must have an username')
+        user = self.model(
+            username=username,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    def create_superuser(self, username, password):
+        user = self.create_user(
+            username=username,
+            password=password
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser):
     username = models.CharField(verbose_name="사용자 아이디", max_length=50, unique=True)
-    password = models.CharField(verbose_name="비밀번호", max_length=50)
-    realname = models.CharField(verbose_name="이름", max_length=50)
-    birthday = models.DateField(verbose_name="생일")
-    age = models.IntegerField(verbose_name="나이", default=0)
-    email = models.EmailField(verbose_name="이메일", max_length=100, unique=True)
+    password = models.CharField(verbose_name="비밀번호", max_length=128)
+    realname = models.CharField(verbose_name="이름", max_length=50, null=True)
+    birthday = models.DateField(verbose_name="생일", null=True)
+    age = models.IntegerField(verbose_name="나이", default=0, null=True)
+    email = models.EmailField(verbose_name="이메일", max_length=100, null=True)
     created_at = models.DateTimeField(verbose_name="가입시각", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="수정시각", auto_now=True)
     
+    is_active = models.BooleanField(default=True) 
+    is_admin = models.BooleanField(default=False)
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+    
+    objects = UserManager()
+    
     def __str__(self):
         return self.username
+    
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label): 
+        return True
+    
+    @property
+    def is_staff(self): 
+        return self.is_admin
+
 
 class Hobby(models.Model):
     name = models.CharField(verbose_name="취미", max_length=50)
     
     def __str__(self):
         return self.name
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, verbose_name="사용자", primary_key=True)
