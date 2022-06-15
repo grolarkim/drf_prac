@@ -280,3 +280,6 @@ cython_debug/
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python,django
+
+#암호키 등이 들어있는 파일이지만 토이프로젝트이므로 공개
+#secret.json

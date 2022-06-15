@@ -24,8 +24,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     userprofile = UserProfileSerializer()
+    article_list = serializers.SerializerMethodField()
+    
+    def get_article_list(self, obj):
+        article_list = []
+        for article in obj.article_set.all():
+            article_list.append(article.title)
+        return article_list
 
     class Meta:
         model = User
-        fields = ["username", "password", "realname", "email", "birthday", "age", "userprofile"]
+        fields = ["username", "password", "realname", "email", "birthday", "age", "userprofile", "article_list"]
         extra_kwargs = {"password":{"write_only": True}}
