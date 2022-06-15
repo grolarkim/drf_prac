@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
-
+from userapp.models import User, UserProfile, Hobby
+from userapp.serializers import UserSerializer
 
 class LoginView(APIView):
     def post(self, request):
@@ -21,8 +22,6 @@ class LoginView(APIView):
 class UserView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
-            user = request.user
-            user_profile = request.user.userprofile
-            articles = user.article_set.all()
-            return Response({""}, status=status.HTTP_200_OK)
+            data = UserSerializer(User.objects.all(), many=True).data
+            return Response(data, status=status.HTTP_200_OK)
         return Response({"error":"로그인이 필요합니다."}, status=status.HTTP_401_UNAUTHORIZED)

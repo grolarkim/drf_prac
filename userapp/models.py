@@ -69,11 +69,11 @@ class UserProfile(models.Model):
     profile_image = models.ImageField(verbose_name="프로필 사진", null=True)
     
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class UserProfileHobby(models.Model):
     user_profile = models.ForeignKey(to=UserProfile, on_delete=models.CASCADE)
     hobby = models.ForeignKey(to=Hobby, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.user_profile
+        return self.user_profile.user.username
