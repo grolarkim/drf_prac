@@ -28,5 +28,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path("user/", include("userapp.urls")),
     path("blog/", include("blogapp.urls")),
+    path("product/", include("productapp.urls")),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
